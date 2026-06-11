@@ -1,14 +1,18 @@
-const users = require("../models/userModel");
+const Users = require("../models/UserModel");
 const bcrypt=require("bcrypt")
 const signUp=async(req,res)=>{
     try {
         const {name,email,password}=req.body;
+        const userExist=await Users.findAll({where:{email:email}});
+        if(userExist.length){
+            return res.status(409).send("User already exist")
+        }
         bcrypt.hash(password, 10,async function(err, hash) {
           if(err){
             throw new Error("Something went wrong!")
           }
             
-        const user=await users.create({name,email,password:hash});
+        const user=await Users.create({name,email,password:hash});
         res.status(201).json({user,message:"User created successfully"})
         });
         
@@ -25,7 +29,7 @@ const signUp=async(req,res)=>{
 const logIn=async(req,res)=>{
     try {
         const {email,password}=req.body;
-        const user=await users.findAll({
+        const user=await Users.findAll({
             where:{
                 email:email
             }
