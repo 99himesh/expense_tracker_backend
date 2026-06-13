@@ -3,7 +3,7 @@ const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken");
 
 const generatejwtToken=async(userId,name)=>{
-   return await jwt.sign({ userId: userId,name:name }, "jdfgshjfbhjdsbfhjsdbjhfbsdjhfsd"); 
+   return await jwt.sign({ userId: userId,name:name }, process.env.SECRET_KEY); 
 }
 
 const signUp=async(req,res)=>{
