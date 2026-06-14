@@ -7,17 +7,23 @@
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
   },
   "dependencies": {
     "@cashfreepayments/cashfree-js": "^1.0.7",
+    "@google/genai": "^2.8.0",
     "bcrypt": "^6.0.0",
     "cashfree-pg": "^6.0.4",
+    "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.11.0",
     "mysql2": "^3.22.3",
+    "nodemon": "^3.1.14",
     "sequelize": "^6.37.8"
   }
 }

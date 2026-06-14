@@ -23,7 +23,13 @@ const users=sequelize.define(
         password:{
           type:DataTypes.STRING,
           allowNull:false  
+        },
+        isPremiorUser:DataTypes.BOOLEAN,
+        total_amount:{
+         type: DataTypes.INTEGER,
+         defaultValue:0
         }
+        
         
     }
 

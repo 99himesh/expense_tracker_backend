@@ -1,0 +1,11 @@
+{
+    "env":{
+        "PORT":3000,
+        "GEMINI_API_KEY":"AQ.Ab8RN6KUn57Q63WpohR0_eqU19JMoMXpNkSfbi-zhqyLo7s55w",
+        "SECRET_KEY":"jdfgshjfbhjdsbfhjsdbjhfbsdjhfsd",
+        "API_KEY":"TEST430329ae80e0f32e41a393d78b923034",
+        "SECRET_KEY":"TESTaf195616268bd6202eeb3bf8dc458956e7192a85"
+
+
+    }
+}

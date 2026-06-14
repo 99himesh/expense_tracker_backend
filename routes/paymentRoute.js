@@ -5,5 +5,5 @@ const authentication = require("../middleware/auth");
 
 router.post("/pay",authentication.authenticate,paymentControllers.createOrders)
 router.get("/payment-status/:id",authentication.authenticate,paymentControllers.getPaymentDetails)
-
+router.get("/getOrder-status",authentication.authenticate,paymentControllers.getUser)
 module.exports=router;

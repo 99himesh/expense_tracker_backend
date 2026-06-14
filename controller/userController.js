@@ -1,15 +1,17 @@
 const Users = require("../models/UserModel");
 const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken");
+const sequelize = require("../utils/database");
 
 const generatejwtToken=async(userId,name)=>{
    return await jwt.sign({ userId: userId,name:name }, process.env.SECRET_KEY); 
 }
 
 const signUp=async(req,res)=>{
+const transaction=await sequelize.transaction();
     try {
         const {name,email,password}=req.body;
-        const userExist=await Users.findAll({where:{email:email}});
+        const userExist=await Users.findAll({where:{email:email}},{transaction});
         if(userExist.length){
             return res.status(409).send("User already exist")
         }
@@ -18,12 +20,14 @@ const signUp=async(req,res)=>{
             throw new Error("Something went wrong!")
           }
             
-        const user=await Users.create({name,email,password:hash});
+        const user=await Users.create({name,email,password:hash},{transaction});
+        await transaction.commit();
         res.status(201).json({user,message:"User created successfully"})
         });
         
         
     } catch (error) {
+        await transaction.rollback();
         console.log(error);
         
         res.status(500).json(error)
@@ -33,13 +37,15 @@ const signUp=async(req,res)=>{
 
 
 const logIn=async(req,res)=>{
+const transaction=await sequelize.transaction();
+
     try {
         const {email,password}=req.body;
         const user=await Users.findAll({
             where:{
                 email:email
             }
-        });
+        },{transaction});
         
         if(!user.length){
            return res.status(404).send("User not exist");
@@ -49,7 +55,8 @@ const logIn=async(req,res)=>{
               if(err){
                throw new Error("Something went wrong!")
              }         
-            if(result){  
+            if(result){ 
+              await transaction.commit() 
               res.status(200).json({user,token:await generatejwtToken(user[0].id,user[0].name),message:"User Login successfully"})
              }else{
              return res.status(401).send("User not authorized");
@@ -58,14 +65,30 @@ const logIn=async(req,res)=>{
         })
         
     } catch (error) {
+        await transaction.rollback()
         res.status(500).json(error.message)
         
     }
-}
+ }
 
+
+    const getAllUser=async(req,res)=>{
+    const transaction=await sequelize.transaction();
+
+        try {
+            const user=await Users.findAll({transaction});
+            transaction.commit();
+            res.status(200).json({success:true,message:"Users Fetch successfully",user});
+        } catch (error) {
+            transaction.rollback();
+            res.status(500).send(error.message)
+        }
+
+    }
 
 
 module.exports={
     signUp,
-    logIn
+    logIn,
+    getAllUser
 };

@@ -4,6 +4,6 @@ const userController=require("../controller/userController.js")
 
 router.post("/signUp",userController.signUp)
 router.post("/login",userController.logIn)
-
+router.get("/leaderBoard",userController.getAllUser)
 
 module.exports=router;
