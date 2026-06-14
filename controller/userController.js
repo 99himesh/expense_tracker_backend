@@ -4,7 +4,7 @@ const jwt=require("jsonwebtoken");
 const sequelize = require("../utils/database");
 
 const generatejwtToken=async(userId,name)=>{
-   return await jwt.sign({ userId: userId,name:name }, process.env.SECRET_KEY); 
+   return await jwt.sign({ userId: userId,name:name }, process.env.JWT_SECRET_KEY); 
 }
 
 const signUp=async(req,res)=>{
