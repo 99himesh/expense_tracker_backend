@@ -7,7 +7,6 @@ const cors=require("cors");
 const db=require("./utils/database.js");
 const bodyParser = require('body-parser');
 //model
-require("./models")
 const UserModels=require("./models/UserModel.js");
 const ExpenseModels=require("./models/ExpenseModel.js")
 const userRoute=require("./routes/UserRoute.js");
