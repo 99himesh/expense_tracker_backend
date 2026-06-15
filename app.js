@@ -7,8 +7,8 @@ const cors=require("cors");
 const db=require("./utils/database.js");
 const bodyParser = require('body-parser');
 //model
-const UserModels=require("./models/UserModel.js");
-const ExpenseModels=require("./models/ExpenseModel.js")
+const UserModels=require("./models/userModel.js");
+const ExpenseModels=require("./models/expenseModel.js")
 const userRoute=require("./routes/UserRoute.js");
 const expenseRoute=require("./routes/ExpenseRoute.js");
 const paymentRoute=require("./routes/paymentRoute.js");
@@ -32,8 +32,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(compression());
 app.use(morgan('combined',{stream:accessLogStream})) 
 
-UserModel.hasMany(ExpenseModel);
-ExpenseModel.belongsTo(UserModel)
+UserModels.hasMany(ExpenseModels);
+ExpenseModels.belongsTo(UserModels)
 
 app.use("/users",userRoute)
 app.use("/expense",expenseRoute)

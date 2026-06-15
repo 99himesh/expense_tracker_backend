@@ -1,6 +1,6 @@
 
 const PaymentModel = require("../models/PaymentModel");
-const Users = require("../models/UserModel");
+const Users = require("../models/userModel");
 const {createOrderInCashfree, getPaymentStatus}=require("../services/cashfreeServics");
 const sequelize = require("../utils/database");
 const createOrders=async(req,res)=>{

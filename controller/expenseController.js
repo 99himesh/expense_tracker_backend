@@ -1,5 +1,5 @@
 
-const ExpenseModel=require("../models/ExpenseModel");
+const ExpenseModel=require("../models/expenseModel");
 const sequelize = require("../utils/database");
 const addExpense=async(req,res)=>{
     const transaction=await sequelize.transaction();

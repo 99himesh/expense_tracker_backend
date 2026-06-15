@@ -1,4 +1,4 @@
-const Users = require("../models/UserModel");
+const Users = require("../models/userModel");
 const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken");
 const sequelize = require("../utils/database");
