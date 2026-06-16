@@ -1,5 +1,5 @@
-require('dotenv').config()
 
+require('dotenv').config()
 const express=require("express");
 const fs=require("fs")
 const app=express();
@@ -42,7 +42,7 @@ app.use("/expense",expenseRoute)
 app.use("/payment",paymentRoute);
 app.use("/ai",aiRoute)
  db.sync().then(()=>{
-    app.listen(process.env.PORT ,(err)=>{
+    app.listen(process.env.PORT || 3000,(err)=>{
         console.log(`Server is running on port ${process.env.PORT}`); 
     }) 
     }).catch((err)=>{
