@@ -8,7 +8,7 @@ const db=require("./utils/database.js");
 const bodyParser = require('body-parser');
 //model
 const UserModels=require("./models/userModel.js");
-const ExpenseModels=require("./models/expenseModel.js")
+const ExpenseModels=require("./models/ExpenseModel.js")
 const userRoute=require("./routes/UserRoute.js");
 const expenseRoute=require("./routes/ExpenseRoute.js");
 const paymentRoute=require("./routes/paymentRoute.js");
