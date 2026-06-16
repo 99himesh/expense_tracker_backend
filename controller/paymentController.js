@@ -1,5 +1,5 @@
 
-const PaymentModel = require("../models/paymentModel");
+const PaymentModel = require("../models/PaymentModel");
 const Users = require("../models/userModel");
 const {createOrderInCashfree, getPaymentStatus}=require("../services/cashfreeServics");
 const sequelize = require("../utils/database");
