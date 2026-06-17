@@ -1,6 +1,4 @@
 const {Cashfree, CFEnvironment}=require("cashfree-pg");
-console.log(process.env.SECRET_KEY,"fvfsjkvjn");
-
 const cashfree = new Cashfree(CFEnvironment.SANDBOX, process.env.API_KEY, process.env.SECRET_KEY);
 
 const createOrderInCashfree=async(

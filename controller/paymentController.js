@@ -42,9 +42,9 @@ const createOrders=async(req,res)=>{
                 res.status(404).send("payment not found")
                 }
                 payment[0].orderStatus=paymentStatus;
-                payment[0].save({transaction});
+                await payment[0].save({transaction});
                 req.user.isPremiorUser=true;
-                req.user.save({transaction});
+                await req.user.save({transaction});
                 await transaction.commit();
                 res.status(200).json({payment,success:true,message:"Payment fetched successfully"})
             } catch (error) {
