@@ -9,9 +9,5 @@
         "DB_NAME":"expenseTracker",
         "DB_PASSWORD":"Himesh1999",
         "DB_HOST":"expensetracker.cj88ycqggc2z.ap-south-1.rds.amazonaws.com"
-
-
-
-
     }
 }
