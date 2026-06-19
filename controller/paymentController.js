@@ -35,7 +35,6 @@ const createOrders=async(req,res)=>{
             const transaction=await sequelize.transaction();
             try {
                 const paymentStatus=await getPaymentStatus(id);
-                console.log(paymentStatus,"pdcnsdjcjs");
                 
                 const payment=await PaymentModel.findAll({where:{orderId:id}},{transaction})
                 if(!payment.length){

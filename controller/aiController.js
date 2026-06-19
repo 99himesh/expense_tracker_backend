@@ -1,5 +1,4 @@
 const  {GoogleGenAI}=require('@google/genai');
-console.log(process.env.GEMINI_API_KEY,"GEMINI_API_KEY");
 
 const ai = new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY});
 const aiGpt=async(req,res)=>{

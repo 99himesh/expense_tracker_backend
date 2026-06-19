@@ -2,6 +2,8 @@ const Users = require("../models/userModel");
 const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken");
 const sequelize = require("../utils/database");
+const { where } = require("sequelize");
+const { transPorter } = require("../services/nodemailerService");
 
 const generatejwtToken=async(userId,name)=>{
    return await jwt.sign({ userId: userId,name:name }, process.env.JWT_SECRET_KEY); 
@@ -87,8 +89,60 @@ const transaction=await sequelize.transaction();
     }
 
 
+    const sendforgetPasswordLink=async(req,res)=>{        
+            try {
+            const {email}=req.body;
+            
+            const user=await Users.findOne({where:{email:email}});
+            if(!user){
+                res.status(404).json({message:"User not found"});
+            }
+            const token=await jwt.sign({id:user.id},process.env.JWT_PASSWORD_SECRETKEY,{expiresIn:"15m"});
+            const link=`${process.env.VITE_BASE_URL}/new-password/${token}`;
+              await transPorter.sendMail({
+                from:process.env.GMAIL_TEXT,
+                to:email,
+                Subject:"RESET Password",
+                html:
+                `
+                 <h2>Reset Password</h2>
+                <a href="${link}">
+                    Click Here
+                </a>`
+            });
+            res.status(200).json({message:"Reset link sent"})
+            } catch (error) {
+                 console.log(error);
+                 
+            }
+    }
+
+
+     const setNewPassword=async(req,res)=>{
+            try {
+                const {token}=req.headers;
+                const {password}=req.body;
+               
+                
+                const decode=await jwt.verify(token,process.env.JWT_PASSWORD_SECRETKEY);
+                
+                const user=await  Users.findByPk(decode.id);
+                if(!user){
+                res.status(404).json({message:"User not found"});
+                }
+                const hashedPassword=await bcrypt.hash(password,10)
+                 user.password=hashedPassword;
+                 user.save();
+                 res.status(200).json({message:"Password update suucessfully"})  
+            } catch (error) {
+               console.log(error);
+                 
+            }
+    }
 module.exports={
     signUp,
     logIn,
-    getAllUser
+    getAllUser,
+    sendforgetPasswordLink,
+    setNewPassword
 };
