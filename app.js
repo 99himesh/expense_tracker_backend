@@ -17,6 +17,7 @@ const compression = require("compression");
 // const helmet=require("helmet");
 const morgan=require("morgan");
 const path = require("path");
+const DownloadedExpenseModel = require('./models/downloadExpenseModel.js');
 
 
     
@@ -35,10 +36,16 @@ app.use(morgan('combined',{stream:accessLogStream}))
 UserModels.hasMany(ExpenseModels);
 ExpenseModels.belongsTo(UserModels)
 
+UserModels.hasMany(DownloadedExpenseModel);
+DownloadedExpenseModel.belongsTo(UserModels)
+
+//routes
 app.use("/users",userRoute)
 app.use("/expense",expenseRoute)
 app.use("/payment",paymentRoute);
 app.use("/ai",aiRoute)
+
+
  db.sync().then(()=>{
     app.listen(process.env.PORT || 3000,(err)=>{
         console.log(`Server is running on port ${process.env.PORT}`); 

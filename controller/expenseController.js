@@ -1,5 +1,9 @@
 
+const { Op } = require("sequelize");
 const ExpenseModel=require("../models/ExpenseModel");
+const DownloadedExpenseModel=require("../models/downloadExpenseModel.js")
+const { awsS3Services } = require("../services/awsS3Services");
+
 const sequelize = require("../utils/database");
 const addExpense=async(req,res)=>{
     const transaction=await sequelize.transaction();
@@ -21,11 +25,12 @@ const addExpense=async(req,res)=>{
             try {
                 const expenses=await ExpenseModel.findAndCountAll({
                     where:{
-                        userId:req.user.id,
+                        userId:req.user.id
                     },
+
                      limit:Number(limit),
-                     offset:Number((page-1) * 5)
-                
+                     offset:Number((page-1) * 5),
+                     order:[["createdAt","desc"]]
                 },{transaction}
                 );
 
@@ -54,9 +59,52 @@ const addExpense=async(req,res)=>{
         }
         }
 
+        const downloadExpenses=async(req,res)=>{            
+            try {
+                const expenses=await ExpenseModel.findAll({where:{userId:req.user.id}});
+                if(!expenses.length){
+                   return res.status(404).json({message:"Expenses not found"})
+                }
+                const stringifyExpense=JSON.stringify(expenses);
+                const filename=`expense${req.user.id}/${new Date()}.txt`
+                
+                const fileUrl= await awsS3Services(stringifyExpense,filename);
+                
+                await DownloadedExpenseModel.create({
+                     file:fileUrl,
+                     userId:req.user.id
+                });
+                res.status(200).json({success:true,fileUrl})
+            } catch (error) {
+                console.log(error);
+                
+            }
+        }
+
+        const getDownloadExpense=async(req,res)=>{
+            try {
+                const downloadedExpense=await DownloadedExpenseModel.findAll({
+                    where:{
+                        userId:req.user.id
+                    },
+                    limit:5,
+                    order:[["createdAt","desc"]]
+                });
+               
+                res.status(200).json({success:true,downloadedExpense})
+                
+            } catch (error) {
+                console.log(error);
+                
+                res.status(500).json({success:false})
+            }
+        }
+
 
 module.exports={
     addExpense,
     getExpense,
-    deleteExpense
+    deleteExpense,
+    downloadExpenses,
+    getDownloadExpense
 }

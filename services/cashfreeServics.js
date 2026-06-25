@@ -9,7 +9,6 @@ const createOrderInCashfree=async(
     customerPhone
 )=>{
    try {
-console.log(orderId,"sdfsdf");
 
     const expiryDate=new Date(Date.now()+60*60*1000);
     const formatedDate=expiryDate.toISOString();

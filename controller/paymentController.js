@@ -8,14 +8,14 @@ const createOrders=async(req,res)=>{
     try {
         const response=await createOrderInCashfree(
              `Order-${Date.now()}`,
-               123,
+               99,
               "INR",
               req.user.id,
               9898767660
         );        
         await PaymentModel.create({
            orderId: response.orderId,
-           orderAmount:123,
+           orderAmount:99,
            customerId:req.user.id,
            orderCurrency:"INR",
            customerPhone:"9898767660",
@@ -53,7 +53,6 @@ const createOrders=async(req,res)=>{
         }
 
         const getUser=async(req,res)=>{
-            
             try {
              res.status(200).json({success:true,message:"User fetch successfully",user:req.user});
              

@@ -24,7 +24,7 @@ const transaction=await sequelize.transaction();
             
         const user=await Users.create({name,email,password:hash},{transaction});
         await transaction.commit();
-        res.status(201).json({user,message:"User created successfully"})
+        res.status(201).json({success:true,user,message:"User created successfully"})
         });
         
         
@@ -59,7 +59,7 @@ const transaction=await sequelize.transaction();
              }         
             if(result){ 
               await transaction.commit() 
-              res.status(200).json({user,token:await generatejwtToken(user[0].id,user[0].name),message:"User Login successfully"})
+              res.status(200).json({success:true,user,token:await generatejwtToken(user[0].id,user[0].name),message:"User Login successfully"})
              }else{
              return res.status(401).send("User not authorized");
             }
@@ -78,7 +78,7 @@ const transaction=await sequelize.transaction();
     const transaction=await sequelize.transaction();
 
         try {
-            const user=await Users.findAll({transaction});
+            const user=await Users.findAll({limit:5,transaction});
             transaction.commit();
             res.status(200).json({success:true,message:"Users Fetch successfully",user});
         } catch (error) {
@@ -110,7 +110,7 @@ const transaction=await sequelize.transaction();
                     Click Here
                 </a>`
             });
-            res.status(200).json({message:"Reset link sent"})
+            res.status(200).json({success:true,message:"Reset link sent"})
             } catch (error) {
                  console.log(error);
                  
@@ -121,9 +121,7 @@ const transaction=await sequelize.transaction();
      const setNewPassword=async(req,res)=>{
             try {
                 const {token}=req.headers;
-                const {password}=req.body;
-               
-                
+                const {password}=req.body; 
                 const decode=await jwt.verify(token,process.env.JWT_PASSWORD_SECRETKEY);
                 
                 const user=await  Users.findByPk(decode.id);
