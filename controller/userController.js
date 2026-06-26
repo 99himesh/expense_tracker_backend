@@ -131,7 +131,7 @@ const transaction=await sequelize.transaction();
                 const hashedPassword=await bcrypt.hash(password,10)
                  user.password=hashedPassword;
                  user.save();
-                 res.status(200).json({message:"Password update suucessfully"})  
+                 res.status(200).json({success:true,message:"Password update suucessfully"})  
             } catch (error) {
                console.log(error);
                  
