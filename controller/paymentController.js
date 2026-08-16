@@ -4,7 +4,7 @@ const Users = require("../models/userModel");
 const {createOrderInCashfree, getPaymentStatus}=require("../services/cashfreeServics");
 const sequelize = require("../utils/database");
 const createOrders=async(req,res)=>{
-    const transaction=await sequelize.transaction();
+    // const transaction=await sequelize.transaction();
     try {
         const response=await createOrderInCashfree(
              `Order-${Date.now()}`,
@@ -13,7 +13,7 @@ const createOrders=async(req,res)=>{
               req.user.id,
               9898767660
         );        
-        await PaymentModel.create({
+        const payment=await PaymentModel({
            orderId: response.orderId,
            orderAmount:99,
            customerId:req.user.id,
@@ -21,33 +21,34 @@ const createOrders=async(req,res)=>{
            customerPhone:"9898767660",
            paymentId:response.payment_session_id,
            orderStatus:"Pending"
-        },{transaction});
-        transaction.commit();
+        });
+        await payment.save();
+        // transaction.commit();
         res.status(200).json({orderId:response.orderId,paymentSessionId:response.payment_session_id,success:true,message:"Order created successfully"}) 
     } catch (error) {
-        transaction.rollback();
+        // transaction.rollback();
         console.log(error);
         
     }
 }
         const getPaymentDetails=async(req,res)=>{
             const {id}=req.params;
-            const transaction=await sequelize.transaction();
+            // const transaction=await sequelize.transaction();
             try {
                 const paymentStatus=await getPaymentStatus(id);
                 
-                const payment=await PaymentModel.findAll({where:{orderId:id}},{transaction})
+                const payment=await PaymentModel.find({orderId:id})
                 if(!payment.length){
                 res.status(404).send("payment not found")
                 }
                 payment[0].orderStatus=paymentStatus;
-                await payment[0].save({transaction});
+                await payment[0].save();
                 req.user.isPremiorUser=true;
-                await req.user.save({transaction});
-                await transaction.commit();
+                await req.user.save();
+                // await transaction.commit();
                 res.status(200).json({payment,success:true,message:"Payment fetched successfully"})
             } catch (error) {
-                await transaction.rollback();
+                // await transaction.rollback();
                 console.log(error);
             }
         }

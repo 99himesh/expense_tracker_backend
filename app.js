@@ -4,10 +4,10 @@ const express=require("express");
 const fs=require("fs")
 const app=express();
 const cors=require("cors");
-const db=require("./utils/database.js");
+// const db=require("./utils/database.js");
 const bodyParser = require('body-parser');
 //model
-const UserModels=require("./models/userModel.js");
+// const UserModels=require("./models/userModel.js");
 const ExpenseModels=require("./models/ExpenseModel.js")
 const userRoute=require("./routes/UserRoute.js");
 const expenseRoute=require("./routes/ExpenseRoute.js");
@@ -18,6 +18,7 @@ const compression = require("compression");
 const morgan=require("morgan");
 const path = require("path");
 const DownloadedExpenseModel = require('./models/downloadExpenseModel.js');
+const connectDB = require('./utils/database.js');
 
 
     
@@ -33,11 +34,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(compression());
 app.use(morgan('combined',{stream:accessLogStream})) 
 
-UserModels.hasMany(ExpenseModels);
-ExpenseModels.belongsTo(UserModels)
+// UserModels.hasMany(ExpenseModels);
+// ExpenseModels.belongsTo(UserModels)
 
-UserModels.hasMany(DownloadedExpenseModel);
-DownloadedExpenseModel.belongsTo(UserModels)
+// UserModels.hasMany(DownloadedExpenseModel);
+// DownloadedExpenseModel.belongsTo(UserModels)
 
 //routes
 app.use("/users",userRoute)
@@ -46,10 +47,20 @@ app.use("/payment",paymentRoute);
 app.use("/ai",aiRoute)
 
 
- db.sync().then(()=>{
-    app.listen(process.env.PORT || 3000,(err)=>{
-        console.log(`Server is running on port ${process.env.PORT}`); 
-    }) 
-    }).catch((err)=>{
-            console.log(err);        
-})
+//  db.sync().then(()=>{
+//     app.listen(process.env.PORT || 3000,(err)=>{
+//         console.log(`Server is running on port ${process.env.PORT}`); 
+//     }) 
+//     }).catch((err)=>{
+//             console.log(err);        
+// })
+
+const startServer = async () => {
+    await connectDB();
+
+    app.listen(process.env.PORT, () => {
+        console.log(`Server running on port ${process.env.PORT}`);
+    });
+};
+
+startServer();

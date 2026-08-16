@@ -1,19 +1,24 @@
 const Users = require("../models/userModel");
+const {ObjectId}=require("mongoose")
 const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken");
 const sequelize = require("../utils/database");
 const { where } = require("sequelize");
 const { transPorter } = require("../services/nodemailerService");
 
-const generatejwtToken=async(userId,name)=>{
-   return await jwt.sign({ userId: userId,name:name }, process.env.JWT_SECRET_KEY); 
+const generatejwtToken=async(_id,name)=>{
+    console.log(_id,name);
+    
+   return await jwt.sign({ _id: _id,name:name }, process.env.JWT_SECRET_KEY); 
 }
 
 const signUp=async(req,res)=>{
-const transaction=await sequelize.transaction();
+// const transaction=await sequelize.transaction();
     try {
         const {name,email,password}=req.body;
-        const userExist=await Users.findAll({where:{email:email}},{transaction});
+        const userExist=await Users.find({email:email});
+        console.log(userExist);
+        
         if(userExist.length){
             return res.status(409).send("User already exist")
         }
@@ -22,14 +27,15 @@ const transaction=await sequelize.transaction();
             throw new Error("Something went wrong!")
           }
             
-        const user=await Users.create({name,email,password:hash},{transaction});
-        await transaction.commit();
+        const user=await Users({name,email,password:hash});
+        user.save()
+        // await transaction.commit();
         res.status(201).json({success:true,user,message:"User created successfully"})
         });
         
         
     } catch (error) {
-        await transaction.rollback();
+        // await transaction.rollback();
         console.log(error);
         
         res.status(500).json(error)
@@ -39,15 +45,13 @@ const transaction=await sequelize.transaction();
 
 
 const logIn=async(req,res)=>{
-const transaction=await sequelize.transaction();
+// const transaction=await sequelize.transaction();
 
     try {
         const {email,password}=req.body;
-        const user=await Users.findAll({
-            where:{
-                email:email
-            }
-        },{transaction});
+        const user=await Users.find({
+                email:email   
+        });
         
         if(!user.length){
            return res.status(404).send("User not exist");
@@ -58,8 +62,8 @@ const transaction=await sequelize.transaction();
                throw new Error("Something went wrong!")
              }         
             if(result){ 
-              await transaction.commit() 
-              res.status(200).json({success:true,user,token:await generatejwtToken(user[0].id,user[0].name),message:"User Login successfully"})
+            //   await transaction.commit() 
+              res.status(200).json({success:true,user,token:await generatejwtToken(user[0]._id,user[0].name),message:"User Login successfully"})
              }else{
              return res.status(401).send("User not authorized");
             }
@@ -67,7 +71,7 @@ const transaction=await sequelize.transaction();
         })
         
     } catch (error) {
-        await transaction.rollback()
+        // await transaction.rollback()
         res.status(500).json(error.message)
         
     }
@@ -75,14 +79,14 @@ const transaction=await sequelize.transaction();
 
 
     const getAllUser=async(req,res)=>{
-    const transaction=await sequelize.transaction();
+    // const transaction=await sequelize.transaction();
 
         try {
-            const user=await Users.findAll({limit:5,transaction});
-            transaction.commit();
+            const user=await Users.find().limit(5);
+            // transaction.commit();
             res.status(200).json({success:true,message:"Users Fetch successfully",user});
         } catch (error) {
-            transaction.rollback();
+            // transaction.rollback();
             res.status(500).send(error.message)
         }
 
@@ -93,11 +97,11 @@ const transaction=await sequelize.transaction();
             try {
             const {email}=req.body;
             
-            const user=await Users.findOne({where:{email:email}});
-            if(!user){
+            const user=await Users.find({email:email});
+            if(!user.length){
                 res.status(404).json({message:"User not found"});
             }
-            const token=await jwt.sign({id:user.id},process.env.JWT_PASSWORD_SECRETKEY,{expiresIn:"15m"});
+            const token=await jwt.sign({id:user[0]._id},process.env.JWT_PASSWORD_SECRETKEY,{expiresIn:"15m"});
             const link=`${process.env.VITE_BASE_URL}/new-password/${token}`;
               await transPorter.sendMail({
                 from:process.env.GMAIL_TEXT,
@@ -119,12 +123,13 @@ const transaction=await sequelize.transaction();
 
 
      const setNewPassword=async(req,res)=>{
+        console.log("dfsdf");
+        
             try {
                 const {token}=req.headers;
                 const {password}=req.body; 
                 const decode=await jwt.verify(token,process.env.JWT_PASSWORD_SECRETKEY);
-                
-                const user=await  Users.findByPk(decode.id);
+                const user = await Users.findById(decode.id);                
                 if(!user){
                 res.status(404).json({message:"User not found"});
                 }
@@ -133,8 +138,7 @@ const transaction=await sequelize.transaction();
                  user.save();
                  res.status(200).json({success:true,message:"Password update suucessfully"})  
             } catch (error) {
-               console.log(error);
-                 
+               console.log(error);    
             }
     }
 module.exports={

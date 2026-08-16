@@ -6,10 +6,14 @@ const UserModel=require("../models/userModel");
 const authenticate=async(req,res,next)=>{
     
     try {
-        const token=req.header("Authorization"); 
-        const user=await jwt.verify(token,process.env.JWT_SECRET_KEY)        
-         const userData=await UserModel.findByPk(user.userId);
-         req.user=userData;         
+        const token=req.header("Authorization");
+        console.log(token,"token");
+         
+        const user=await jwt.verify(token,process.env.JWT_SECRET_KEY) ;
+        console.log(user,"user");
+               
+         const userData=await UserModel.find({_id:user._id});
+         req.user=userData[0];         
          next();
          
     } catch (error) {
