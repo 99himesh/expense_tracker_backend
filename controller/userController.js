@@ -123,12 +123,11 @@ const logIn=async(req,res)=>{
 
 
      const setNewPassword=async(req,res)=>{
-        console.log("dfsdf");
         
             try {
-                const {token}=req.headers;
+                const {token}=req.headers;                
                 const {password}=req.body; 
-                const decode=await jwt.verify(token,process.env.JWT_PASSWORD_SECRETKEY);
+                const decode=await jwt.verify(token,process.env.JWT_PASSWORD_SECRETKEY);                
                 const user = await Users.findById(decode.id);                
                 if(!user){
                 res.status(404).json({message:"User not found"});
