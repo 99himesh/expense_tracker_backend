@@ -22,14 +22,14 @@ const createOrderInCashfree=async(
                 customer_phone: customerPhone.toString()
             },
             order_meta: {
-                // return_url: `http://localhost:5173/payment-status/${orderId}`,
-                return_url: `https://expensetracker-sharpner.netlify.app/payment-status/${orderId}`,
+                return_url: `/payment-status/${orderId}`,
                 payment_methods: "cc,dc,upi"
             },
             order_expiry_time:formatedDate
      };
 
        const res=await cashfree.PGCreateOrder(request);
+       console.log(res.data.payment_session_id);
        
        return {payment_session_id:res.data.payment_session_id,orderId:orderId};
         
